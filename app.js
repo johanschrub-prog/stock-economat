@@ -86,22 +86,25 @@ function setQty(index,valeur){
     save();
 
 }
- <div class="actions">
+<div style="margin-top:10px">
 
-                <button class="minus"
-                    onclick="updateQty(${index},-1)">
-                    -1
-                </button>
+    <input
+    type="number"
+    value="${item.quantite}"
+    style="
+        width:100%;
+        padding:10px;
+        font-size:22px;
+        text-align:center;
+        border-radius:8px;
+        border:1px solid #ccc;
+    "
+    onchange="setQty(${index},this.value)">
 
-                <button class="plus"
-                    onclick="updateQty(${index},1)">
-                    +1
-                </button>
+</div>
 
-                <button class="edit"
-                    onclick="editArticle(${index})">
-                    Modifier
-                </button>
+<div class="actions">
+`
 
                 <button class="delete"
                     onclick="deleteArticle(${index})">
