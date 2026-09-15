@@ -104,7 +104,14 @@ function setQty(index,valeur){
 </div>
 
 <div class="actions">
-`
+function setQty(index,valeur){
+
+    data[currentTab][index].quantite =
+    parseInt(valeur) || 0;
+
+    save();
+
+}
 
                 <button class="delete"
                     onclick="deleteArticle(${index})">
