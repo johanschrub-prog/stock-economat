@@ -60,7 +60,33 @@ function render() {
                 ${item.quantite}
             </div>
 
-            <div class="actions">
+           <div style="margin-top:10px">
+
+    <input
+    type="number"
+    value="${item.quantite}"
+    style="
+        width:100%;
+        padding:10px;
+        font-size:22px;
+        text-align:center;
+        border-radius:8px;
+        border:1px solid #ccc;
+    "
+    onchange="setQty(${index},this.value)">
+
+</div>
+
+<div class="actions">
+function setQty(index,valeur){
+
+    data[currentTab][index].quantite =
+    parseInt(valeur) || 0;
+
+    save();
+
+}
+ <div class="actions">
 
                 <button class="minus"
                     onclick="updateQty(${index},-1)">
