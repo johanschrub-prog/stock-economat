@@ -27,133 +27,100 @@ function changeTab(tab, button) {
     render();
 }
 
+function setQty(index, valeur) {
+
+    data[currentTab][index].quantite =
+        parseInt(valeur) || 0;
+
+    save();
+}
+
 function render() {
 
     const recherche =
-        document.getElementById("search")
-        .value
-        .toLowerCase();
+        document
+            .getElementById("search")
+            .value
+            .toLowerCase();
 
     let html = "";
 
     data[currentTab]
-    .filter(item =>
-        item.article &&
-        item.article
-        .toLowerCase()
-        .includes(recherche)
-    )
-    .forEach((item, index) => {
+        .filter(item =>
+            item.article &&
+            item.article
+                .toLowerCase()
+                .includes(recherche)
+        )
+        .forEach((item, index) => {
 
-        html += `
-        <div class="card">
+            html += `
+            <div class="card">
 
-            <div class="article">
-                ${item.article}
-            </div>
+                <div class="article">
+                    ${item.article}
+                </div>
 
-            <div>
-                Code : ${item.code}
-            </div>
+                <div>
+                    Code : ${item.code}
+                </div>
 
-            <div class="qty">
-                ${item.quantite}
-            </div>
+                <div style="margin-top:10px">
 
-           <div style="margin-top:10px">
+                    <input
+                    type="number"
+                    value="${item.quantite}"
+                    style="
+                        width:100%;
+                        padding:10px;
+                        font-size:22px;
+                        text-align:center;
+                        border-radius:8px;
+                        border:1px solid #ccc;
+                    "
+                    onchange="setQty(${index},this.value)">
 
-    <input
-    type="number"
-    value="${item.quantite}"
-    style="
-        width:100%;
-        padding:10px;
-        font-size:22px;
-        text-align:center;
-        border-radius:8px;
-        border:1px solid #ccc;
-    "
-    onchange="setQty(${index},this.value)">
+                </div>
 
-</div>
+                <div class="actions">
 
-<div class="actions">
-function setQty(index,valeur){
+                    <button
+                    class="edit"
+                    onclick="editArticle(${index})">
+                    Modifier
+                    </button>
 
-    data[currentTab][index].quantite =
-    parseInt(valeur) || 0;
-
-    save();
-
-}
-<div style="margin-top:10px">
-
-    <input
-    type="number"
-    value="${item.quantite}"
-    style="
-        width:100%;
-        padding:10px;
-        font-size:22px;
-        text-align:center;
-        border-radius:8px;
-        border:1px solid #ccc;
-    "
-    onchange="setQty(${index},this.value)">
-
-</div>
-
-<div class="actions">
-function setQty(index,valeur){
-
-    data[currentTab][index].quantite =
-    parseInt(valeur) || 0;
-
-    save();
-
-}
-
-                <button class="delete"
+                    <button
+                    class="delete"
                     onclick="deleteArticle(${index})">
                     Supprimer
-                </button>
+                    </button>
+
+                </div>
 
             </div>
-
-        </div>
-        `;
-
-    });
+            `;
+        });
 
     document.getElementById("cards").innerHTML = html;
 }
 
-function updateQty(index, valeur){
-
-    data[currentTab][index].quantite =
-    Math.max(
-        0,
-        Number(data[currentTab][index].quantite) + valeur
-    );
-
-    save();
-    render();
-}
-
-function addArticle(){
+function addArticle() {
 
     const code =
-    prompt("Code article");
+        prompt("Code article");
 
-    if(!code) return;
+    if (!code) return;
 
     const article =
-    prompt("Nom article");
+        prompt("Nom article");
 
-    if(!article) return;
+    if (!article) return;
 
     const quantite =
-    parseInt(prompt("Quantité","0")) || 0;
+        parseInt(
+            prompt("Quantité", "0")
+        ) || 0;
 
     data[currentTab].push({
         code,
@@ -165,105 +132,118 @@ function addArticle(){
     render();
 }
 
-function editArticle(index){
+function editArticle(index) {
 
-    let item =
-    data[currentTab][index];
+    const item =
+        data[currentTab][index];
 
     item.code =
-    prompt("Code",item.code)
-    || item.code;
+        prompt(
+            "Code",
+            item.code
+        ) || item.code;
 
     item.article =
-    prompt("Article",item.article)
-    || item.article;
+        prompt(
+            "Article",
+            item.article
+        ) || item.article;
 
     item.quantite =
-    parseInt(
-        prompt(
-            "Quantité",
-            item.quantite
-        )
-    ) || 0;
+        parseInt(
+            prompt(
+                "Quantité",
+                item.quantite
+            )
+        ) || 0;
 
     save();
     render();
 }
 
-function deleteArticle(index){
+function deleteArticle(index) {
 
-    if(
+    if (
         !confirm(
             "Supprimer cet article ?"
         )
     ) return;
 
-    data[currentTab].splice(index,1);
+    data[currentTab].splice(
+        index,
+        1
+    );
 
     save();
     render();
 }
 
-function resetStock(){
+function resetStock() {
 
-    if(
+    if (
         !confirm(
             "Mettre toutes les quantités à zéro ?"
         )
     ) return;
 
-    Object.keys(data).forEach(cat => {
+    Object.keys(data)
+        .forEach(cat => {
 
-        data[cat].forEach(item => {
+            data[cat]
+                .forEach(item => {
 
-            item.quantite = 0;
+                    item.quantite = 0;
+
+                });
 
         });
-
-    });
 
     save();
     render();
 }
 
-function exportExcel(){
+function exportExcel() {
+
+    if (typeof XLSX === "undefined") {
+        alert("Bibliothèque Excel non chargée");
+        return;
+    }
 
     const wb =
-    XLSX.utils.book_new();
+        XLSX.utils.book_new();
 
-    function addSheet(
+    function ajouterFeuille(
         nom,
         donnees
-    ){
+    ) {
 
         const ws =
-        XLSX.utils.json_to_sheet(
-            donnees.map(item => ({
-                CODE:item.code,
-                ARTICLE:item.article,
-                QUANTITE:item.quantite
-            }))
-        );
+            XLSX.utils.json_to_sheet(
+                donnees.map(item => ({
+                    CODE: item.code,
+                    ARTICLE: item.article,
+                    QUANTITE: item.quantite
+                }))
+            );
 
         XLSX.utils.book_append_sheet(
             wb,
             ws,
             nom
         );
-
     }
 
-    addSheet(
+    ajouterFeuille(
         "DEVANT BAR",
         data.devant
     );
 
-    addSheet(
+    ajouterFeuille(
         "ARRIERE BAR CHAMPAGNE",
         data.champagne
     );
 
-    addSheet(
+    ajouterFeuille(
         "ARRIERE BAR ALCOOL",
         data.alcool
     );
@@ -274,104 +254,22 @@ function exportExcel(){
     );
 }
 
-function importExcel(event){
+function importExcel(event) {
 
     const file =
-    event.target.files[0];
+        event.target.files[0];
 
-    if(!file) return;
+    if (!file) return;
 
     const reader =
-    new FileReader();
+        new FileReader();
 
-    reader.onload = function(e){
+    reader.onload = function (e) {
 
         const workbook =
-        XLSX.read(
-            e.target.result,
-            {type:"array"}
-        );
-
-        let imported = {
-            devant: [],
-            champagne: [],
-            alcool: []
-        };
-
-        function lireFeuille(
-            nom,
-            destination
-        ){
-
-            const sheet =
-            workbook.Sheets[nom];
-
-            if(!sheet) return;
-
-            const rows =
-            XLSX.utils.sheet_to_json(
-                sheet,
-                {header:1}
+            XLSX.read(
+                e.target.result,
+                { type: "array" }
             );
 
-            rows.forEach(row => {
-
-                if(
-                    !row ||
-                    row.length < 2
-                ) return;
-
-                const code =
-                row[0];
-
-                const article =
-                row[1];
-
-                if(
-                    !article ||
-                    article === "ARTICLE"
-                ) return;
-
-                destination.push({
-                    code:
-                    String(code || ""),
-                    article:
-                    String(article),
-                    quantite:0
-                });
-
-            });
-
-        }
-
-        lireFeuille(
-            "DEVANT BAR",
-            imported.devant
-        );
-
-        lireFeuille(
-            "ARRIERE BAR CHAMPAGNE",
-            imported.champagne
-        );
-
-        lireFeuille(
-            "ARRIERE BAR ALCOOL",
-            imported.alcool
-        );
-
-        data = imported;
-
-        save();
-
-        render();
-
-        alert(
-            "Import Excel terminé"
-        );
-
-    };
-
-    reader.readAsArrayBuffer(file);
-}
-
-render();
+        let imported = 
