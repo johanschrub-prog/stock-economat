@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
- 
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Remontée de Cave</title>
 
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a66ff">
+<link rel="manifest" href="manifest.json">
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+
 body{
 font-family:Segoe UI,sans-serif;
 margin:0;
@@ -25,14 +29,14 @@ text-align:center;
 
 .tabs{
 display:flex;
-flex-wrap:wrap;
 gap:5px;
+flex-wrap:wrap;
 padding:10px;
 background:white;
 }
 
 .tab{
-padding:12px;
+padding:10px;
 border:none;
 border-radius:8px;
 cursor:pointer;
@@ -46,13 +50,14 @@ color:white;
 
 .toolbar{
 display:flex;
-flex-wrap:wrap;
 gap:10px;
+flex-wrap:wrap;
 padding:10px;
+background:white;
 }
 
-.toolbar button,
-.toolbar input{
+.toolbar input,
+.toolbar button{
 padding:10px;
 border-radius:8px;
 border:1px solid #ccc;
@@ -69,18 +74,19 @@ gap:10px;
 background:white;
 padding:15px;
 border-radius:12px;
-box-shadow:0 2px 6px rgba(0,0,0,0.15);
+box-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
 .article{
-font-size:18px;
 font-weight:bold;
+font-size:18px;
 }
 
 .qty{
-font-size:22px;
+font-size:24px;
 font-weight:bold;
 color:#0a66ff;
+margin-top:5px;
 }
 
 .actions{
@@ -91,18 +97,34 @@ margin-top:10px;
 }
 
 .actions button{
-padding:8px;
 border:none;
+padding:8px;
 border-radius:8px;
 cursor:pointer;
 }
 
-.plus{background:#198754;color:white;}
-.minus{background:#fd7e14;color:white;}
-.edit{background:#0d6efd;color:white;}
-.delete{background:#dc3545;color:white;}
+.plus{
+background:#198754;
+color:white;
+}
+
+.minus{
+background:#fd7e14;
+color:white;
+}
+
+.edit{
+background:#0d6efd;
+color:white;
+}
+
+.delete{
+background:#dc3545;
+color:white;
+}
 
 </style>
+
 </head>
 
 <body>
@@ -146,401 +168,29 @@ onkeyup="render()">
 🔄 Remise à zéro
 </button>
 
-<button onclick="exportData()">
-📤 Export
+<button onclick="exportExcel()">
+📤 Export Excel
 </button>
 
 <input
 type="file"
 id="importFile"
 style="display:none"
-onchange="importData(event)">
+onchange="importExcel(event)">
 
 <button
 onclick="document.getElementById('importFile').click()">
-📥 Import
-</button>
-
-<button onclick="scanBarcode()">
-📷 Scanner
+📥 Import Excel
 </button>
 
 </div>
 
-<div class="cards" id="cards"></div>
-
-<script>
-
-let currentTab="devant";
-
-let data=
-JSON.parse(localStorage.getItem("caveData"))
-||
-{
-devant:[],
-champagne:[],
-alcool:[]
-};
-
-function save(){
-localStorage.setItem(
-"caveData",
-JSON.stringify(data)
-);
-}
-
-function changeTab(tab,button){
-
-currentTab=tab;
-
-document
-.querySelectorAll(".tab")
-.forEach(t=>t.classList.remove("active"));
-
-button.classList.add("active");
-
-render();
-}
-
-function addArticle(){
-
-let code=
-prompt("Code article");
-
-if(code===null) return;
-
-let article=
-prompt("Nom article");
-
-if(!article) return;
-
-let quantite=
-parseInt(prompt("Quantité",0)) || 0;
-
-data[currentTab].push({
-code,
-article,
-quantite
-});
-
-save();
-render();
-}
-
-function editArticle(index){
-
-let item=data[currentTab][index];
-
-item.code=
-prompt("Code",item.code);
-
-item.article=
-prompt("Article",item.article);
-
-item.quantite=
-parseInt(
-prompt(
-"Quantité",
-item.quantite
-)) || 0;
-
-save();
-render();
-}
-
-function deleteArticle(index){
-
-if(!confirm("Supprimer ?"))
-return;
-
-data[currentTab].splice(index,1);
-
-save();
-render();
-}
-
-function updateQty(index,val){
-
-data[currentTab][index].quantite=
-Math.max(
-0,
-data[currentTab][index].quantite+val
-);
-
-save();
-render();
-}
-
-function resetStock(){
-
-if(
-confirm(
-"Mettre toutes les quantités à zéro ?"
-)
-){
-
-Object.keys(data)
-.forEach(cat=>{
-
-data[cat]
-.forEach(item=>{
-
-item.quantite=0;
-
-});
-
-});
-
-save();
-render();
-}
-}
-
-function render(){
-
-let search=
-document
-.getElementById("search")
-.value
-.toLowerCase();
-
-let html="";
-
-data[currentTab]
-.filter(a=>
-a.article
-.toLowerCase()
-.includes(search)
-)
-.forEach((item,index)=>{
-
-html+=`
-
-<div class="card">
-
-<div class="article">
-${item.article}
+<div
+class="cards"
+id="cards">
 </div>
 
-<div>
-Code : ${item.code}
-</div>
-
-<div class="qty">
-${item.quantite}
-</div>
-
-<div class="actions">
-
-<button
-class="minus"
-onclick="updateQty(${index},-1)">
--1
-</button>
-
-<button
-class="plus"
-onclick="updateQty(${index},1)">
-+1
-</button>
-
-<button
-class="edit"
-onclick="editArticle(${index})">
-Modifier
-</button>
-
-<button
-class="delete"
-onclick="deleteArticle(${index})">
-Supprimer
-</button>
-
-</div>
-
-</div>
-`;
-});
-
-document.getElementById("cards")
-.innerHTML=html;
-}
-
-function exportData(){
-
-const wb = XLSX.utils.book_new();
-
-function createSheet(nomFeuille, donnees){
-
-const lignes = donnees.map(item => ({
-CODE: item.code,
-ARTICLE: item.article,
-QUANTITE: item.quantite
-}));
-
-const ws = XLSX.utils.json_to_sheet(lignes);
-
-XLSX.utils.book_append_sheet(
-wb,
-ws,
-nomFeuille
-);
-
-}
-
-createSheet(
-"DEVANT BAR",
-data.devant
-);
-
-createSheet(
-"ARRIERE BAR CHAMPAGNE",
-data.champagne
-);
-
-createSheet(
-"ARRIERE BAR ALCOOL",
-data.alcool
-);
-
-const date = new Date();
-
-const fichier =
-"REMONTEE_DE_CAVE_" +
-date.getFullYear() +
-"-" +
-String(date.getMonth()+1).padStart(2,'0') +
-"-" +
-String(date.getDate()).padStart(2,'0') +
-".xlsx";
-
-XLSX.writeFile(
-wb,
-fichier
-);
-
-}
-function importData(event){
-
-const file = event.target.files[0];
-
-if(!file) return;
-
-const reader = new FileReader();
-
-reader.onload = function(e){
-if(typeof XLSX === "undefined"){
- alert("Bibliothèque Excel non chargée");
- return;
-}
-
-const workbook = XLSX.read(
-e.target.result,
-{ type: "array" }
-);
-
-let importedData = {
-devant: [],
-champagne: [],
-alcool: []
-};
-
-function importerFeuille(
-nomFeuille,
-destination
-){
-
-const sheet =
-workbook.Sheets[nomFeuille];
-
-if(!sheet) return;
-
-const rows =
-XLSX.utils.sheet_to_json(
-sheet,
-{ header: 1 }
-);
-
-rows.forEach(row => {
-
-if(
-!row ||
-row.length < 2
-) return;
-
-const code = row[0];
-const article = row[1];
-
-if(
-!article ||
-article === "ARTICLE"
-) return;
-
-if(
-String(article).includes("DEVANT BAR") ||
-String(article).includes("ARRIERE")
-) return;
-
-destination.push({
-code: String(code || ""),
-article: String(article),
-quantite: 0
-});
-
-});
-
-}
-
-importerFeuille(
-"DEVANT BAR",
-importedData.devant
-);
-
-importerFeuille(
-"ARRIERE BAR CHAMPAGNE",
-importedData.champagne
-);
-
-importerFeuille(
-"ARRIERE BAR ALCOOL",
-importedData.alcool
-);
-
-data = importedData;
-
-save();
-
-render();
-
-alert(
-"Import Excel terminé !"
-);
-
-};
-
-reader.readAsArrayBuffer(file);
-
-}
-
-
-
-function scanBarcode(){
-
-alert(
-"Scanner code-barres à ajouter dans la prochaine version."
-);
-
-}
-
-render();
-
-if('serviceWorker' in navigator){
-navigator
-.serviceWorker
-.register('service-worker.js');
-}
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
