@@ -3,239 +3,431 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestion Stock Economat</title>
+
+<title>Remontée de Cave</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a66ff">
 
 <style>
+
 body{
-font-family:Arial,sans-serif;
-background:#f3f5f7;
+font-family:Segoe UI,sans-serif;
 margin:0;
-padding:20px;
+background:#f5f6f8;
 }
 
-h1{
+header{
+background:#0a66ff;
+color:white;
+padding:15px;
 text-align:center;
+}
+
+.tabs{
+display:flex;
+flex-wrap:wrap;
+gap:5px;
+padding:10px;
+background:white;
+}
+
+.tab{
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#ddd;
+}
+
+.tab.active{
+background:#0a66ff;
+color:white;
 }
 
 .toolbar{
 display:flex;
-gap:10px;
 flex-wrap:wrap;
-margin-bottom:15px;
+gap:10px;
+padding:10px;
 }
 
-.toolbar input,
-.toolbar select,
-.toolbar button{
+.toolbar button,
+.toolbar input{
 padding:10px;
-border-radius:10px;
+border-radius:8px;
 border:1px solid #ccc;
 }
 
-.toolbar button{
-background:#0a66ff;
-color:white;
-border:none;
-}
-
 .cards{
+padding:10px;
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-gap:12px;
+grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+gap:10px;
 }
 
 .card{
 background:white;
 padding:15px;
-border-radius:14px;
-box-shadow:0 2px 8px rgba(0,0,0,.12);
+border-radius:12px;
+box-shadow:0 2px 6px rgba(0,0,0,0.15);
 }
 
-.head,
-.row{
-display:grid;
-grid-template-columns:2fr 1fr;
-}
-
-.head{
+.article{
+font-size:18px;
 font-weight:bold;
-border-bottom:1px solid #ddd;
-padding-bottom:8px;
-margin-bottom:8px;
 }
 
 .qty{
-text-align:center;
+font-size:22px;
 font-weight:bold;
-font-size:20px;
+color:#0a66ff;
 }
 
 .actions{
 display:flex;
-justify-content:center;
-gap:10px;
+gap:5px;
+flex-wrap:wrap;
 margin-top:10px;
 }
 
 .actions button{
-padding:8px 12px;
+padding:8px;
 border:none;
 border-radius:8px;
 cursor:pointer;
 }
 
-.plus{
-background:#198754;
-color:white;
-}
+.plus{background:#198754;color:white;}
+.minus{background:#fd7e14;color:white;}
+.edit{background:#0d6efd;color:white;}
+.delete{background:#dc3545;color:white;}
 
-.minus{
-background:#fd7e14;
-color:white;
-}
-
-.delete{
-background:#dc3545;
-color:white;
-}
 </style>
 </head>
 
 <body>
 
-<h1>Gestion Stock Economat</h1>
+<header>
+<h2>REMONTÉE DE CAVE</h2>
+</header>
 
-<div class="toolbar">
-<input id="article" placeholder="Article">
-<input id="quantite" type="number" placeholder="Quantité">
-<button onclick="ajouter()">Ajouter</button>
+<div class="tabs">
+
+<button class="tab active"
+onclick="changeTab('devant',this)">
+DEVANT BAR
+</button>
+
+<button class="tab"
+onclick="changeTab('champagne',this)">
+ARRIERE BAR CHAMPAGNE
+</button>
+
+<button class="tab"
+onclick="changeTab('alcool',this)">
+ARRIERE BAR ALCOOL
+</button>
+
 </div>
 
 <div class="toolbar">
-<input id="recherche" placeholder="Rechercher" onkeyup="afficher()">
 
-<select id="filtre" onchange="afficher()">
-<option value="all">Tous</option>
-<option value="stock">En stock</option>
-<option value="rupture">Rupture</option>
-</select>
+<input
+type="text"
+id="search"
+placeholder="Rechercher..."
+onkeyup="render()">
+
+<button onclick="addArticle()">
+➕ Ajouter
+</button>
+
+<button onclick="resetStock()">
+🔄 Remise à zéro
+</button>
+
+<button onclick="exportData()">
+📤 Export
+</button>
+
+<input
+type="file"
+id="importFile"
+style="display:none"
+onchange="importData(event)">
+
+<button
+onclick="document.getElementById('importFile').click()">
+📥 Import
+</button>
+
+<button onclick="scanBarcode()">
+📷 Scanner
+</button>
+
 </div>
 
-<div id="liste" class="cards"></div>
+<div class="cards" id="cards"></div>
 
 <script>
 
-let stock = JSON.parse(localStorage.getItem("stock")) || [];
+let currentTab="devant";
 
-function sauvegarder(){
-localStorage.setItem("stock", JSON.stringify(stock));
+let data=
+JSON.parse(localStorage.getItem("caveData"))
+||
+{
+devant:[],
+champagne:[],
+alcool:[]
+};
+
+function save(){
+localStorage.setItem(
+"caveData",
+JSON.stringify(data)
+);
 }
 
-function ajouter(){
+function changeTab(tab,button){
 
-let article = document.getElementById("article").value.trim();
-let quantite = parseInt(document.getElementById("quantite").value || 0);
+currentTab=tab;
 
-if(article === "") return;
+document
+.querySelectorAll(".tab")
+.forEach(t=>t.classList.remove("active"));
 
-stock.push({
-article: article,
-quantite: quantite
+button.classList.add("active");
+
+render();
+}
+
+function addArticle(){
+
+let code=
+prompt("Code article");
+
+if(code===null) return;
+
+let article=
+prompt("Nom article");
+
+if(!article) return;
+
+let quantite=
+parseInt(prompt("Quantité",0)) || 0;
+
+data[currentTab].push({
+code,
+article,
+quantite
 });
 
-sauvegarder();
-afficher();
-
-document.getElementById("article").value="";
-document.getElementById("quantite").value="";
+save();
+render();
 }
 
-function modifier(index,valeur){
+function editArticle(index){
 
-stock[index].quantite =
-Math.max(0, stock[index].quantite + valeur);
+let item=data[currentTab][index];
 
-sauvegarder();
-afficher();
+item.code=
+prompt("Code",item.code);
+
+item.article=
+prompt("Article",item.article);
+
+item.quantite=
+parseInt(
+prompt(
+"Quantité",
+item.quantite
+)) || 0;
+
+save();
+render();
 }
 
-function supprimer(index){
+function deleteArticle(index){
 
-stock.splice(index,1);
+if(!confirm("Supprimer ?"))
+return;
 
-sauvegarder();
-afficher();
+data[currentTab].splice(index,1);
+
+save();
+render();
 }
 
-function afficher(){
+function updateQty(index,val){
 
-let recherche =
-document.getElementById("recherche")
-.value.toLowerCase();
+data[currentTab][index].quantite=
+Math.max(
+0,
+data[currentTab][index].quantite+val
+);
 
-let filtre =
-document.getElementById("filtre").value;
+save();
+render();
+}
+
+function resetStock(){
+
+if(
+confirm(
+"Mettre toutes les quantités à zéro ?"
+)
+){
+
+Object.keys(data)
+.forEach(cat=>{
+
+data[cat]
+.forEach(item=>{
+
+item.quantite=0;
+
+});
+
+});
+
+save();
+render();
+}
+}
+
+function render(){
+
+let search=
+document
+.getElementById("search")
+.value
+.toLowerCase();
 
 let html="";
 
-stock.forEach((item,index)=>{
+data[currentTab]
+.filter(a=>
+a.article
+.toLowerCase()
+.includes(search)
+)
+.forEach((item,index)=>{
 
-if(!item.article.toLowerCase()
-.includes(recherche))
-return;
+html+=`
 
-if(filtre==="stock" && item.quantite<=0)
-return;
-
-if(filtre==="rupture" && item.quantite>0)
-return;
-
-html += `
 <div class="card">
 
-<div class="head">
-<div>Article</div>
-<div style="text-align:center;">
-Quantité
-</div>
+<div class="article">
+${item.article}
 </div>
 
-<div class="row">
-<div>${item.article}</div>
-<div class="qty">${item.quantite}</div>
+<div>
+Code : ${item.code}
+</div>
+
+<div class="qty">
+${item.quantite}
 </div>
 
 <div class="actions">
-<button class="minus"
-onclick="modifier(${index},-1)">
+
+<button
+class="minus"
+onclick="updateQty(${index},-1)">
 -1
 </button>
 
-<button class="plus"
-onclick="modifier(${index},1)">
+<button
+class="plus"
+onclick="updateQty(${index},1)">
 +1
 </button>
 
-<button class="delete"
-onclick="supprimer(${index})">
+<button
+class="edit"
+onclick="editArticle(${index})">
+Modifier
+</button>
+
+<button
+class="delete"
+onclick="deleteArticle(${index})">
 Supprimer
 </button>
+
 </div>
 
 </div>
 `;
 });
 
-document.getElementById("liste").innerHTML=html;
+document.getElementById("cards")
+.innerHTML=html;
 }
 
-afficher();
+function exportData(){
 
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('service-worker.js');
+let blob=
+new Blob(
+[
+JSON.stringify(data,null,2)
+],
+{
+type:"application/json"
+}
+);
+
+let a=
+document.createElement("a");
+
+a.href=
+URL.createObjectURL(blob);
+
+a.download=
+"remontee-cave.json";
+
+a.click();
+}
+
+function importData(event){
+
+let file=
+event.target.files[0];
+
+if(!file) return;
+
+let reader=
+new FileReader();
+
+reader.onload=function(e){
+
+data=
+JSON.parse(e.target.result);
+
+save();
+render();
+
+};
+
+reader.readAsText(file);
+}
+
+function scanBarcode(){
+
+alert(
+"Scanner code-barres à ajouter dans la prochaine version."
+);
+
+}
+
+render();
+
+if('serviceWorker' in navigator){
+navigator
+.serviceWorker
+.register('service-worker.js');
 }
 
 </script>
