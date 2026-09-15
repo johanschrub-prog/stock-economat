@@ -38,6 +38,7 @@ function render() {
 
     data[currentTab]
     .filter(item =>
+        item.article &&
         item.article
         .toLowerCase()
         .includes(recherche)
@@ -91,41 +92,32 @@ function render() {
     document.getElementById("cards").innerHTML = html;
 }
 
-function updateQty(index, valeur) {
+function updateQty(index, valeur){
 
     data[currentTab][index].quantite =
-        Math.max(
-            0,
-            data[currentTab][index].quantite + valeur
-        );
+    Math.max(
+        0,
+        Number(data[currentTab][index].quantite) + valeur
+    );
 
     save();
     render();
 }
 
-function deleteArticle(index) {
+function addArticle(){
 
-    if (!confirm("Supprimer cet article ?"))
-        return;
+    const code =
+    prompt("Code article");
 
-    data[currentTab].splice(index, 1);
+    if(!code) return;
 
-    save();
-    render();
-}
+    const article =
+    prompt("Nom article");
 
-function addArticle() {
-
-    const code = prompt("Code article");
-
-    if (!code) return;
-
-    const article = prompt("Nom article");
-
-    if (!article) return;
+    if(!article) return;
 
     const quantite =
-        parseInt(prompt("Quantité", "0")) || 0;
+    parseInt(prompt("Quantité","0")) || 0;
 
     data[currentTab].push({
         code,
@@ -137,53 +129,213 @@ function addArticle() {
     render();
 }
 
-function editArticle(index) {
+function editArticle(index){
 
-    const article =
-        data[currentTab][index];
+    let item =
+    data[currentTab][index];
 
-    article.code =
+    item.code =
+    prompt("Code",item.code)
+    || item.code;
+
+    item.article =
+    prompt("Article",item.article)
+    || item.article;
+
+    item.quantite =
+    parseInt(
         prompt(
-            "Code",
-            article.code
-        ) || article.code;
-
-    article.article =
-        prompt(
-            "Article",
-            article.article
-        ) || article.article;
-
-    article.quantite =
-        parseInt(
-            prompt(
-                "Quantité",
-                article.quantite
-            )
-        ) || 0;
+            "Quantité",
+            item.quantite
+        )
+    ) || 0;
 
     save();
     render();
 }
 
-function resetStock() {
+function deleteArticle(index){
 
-    if (
+    if(
         !confirm(
-            "Remettre toutes les quantités à zéro ?"
+            "Supprimer cet article ?"
+        )
+    ) return;
+
+    data[currentTab].splice(index,1);
+
+    save();
+    render();
+}
+
+function resetStock(){
+
+    if(
+        !confirm(
+            "Mettre toutes les quantités à zéro ?"
         )
     ) return;
 
     Object.keys(data).forEach(cat => {
 
         data[cat].forEach(item => {
+
             item.quantite = 0;
+
         });
 
     });
 
     save();
     render();
+}
+
+function exportExcel(){
+
+    const wb =
+    XLSX.utils.book_new();
+
+    function addSheet(
+        nom,
+        donnees
+    ){
+
+        const ws =
+        XLSX.utils.json_to_sheet(
+            donnees.map(item => ({
+                CODE:item.code,
+                ARTICLE:item.article,
+                QUANTITE:item.quantite
+            }))
+        );
+
+        XLSX.utils.book_append_sheet(
+            wb,
+            ws,
+            nom
+        );
+
+    }
+
+    addSheet(
+        "DEVANT BAR",
+        data.devant
+    );
+
+    addSheet(
+        "ARRIERE BAR CHAMPAGNE",
+        data.champagne
+    );
+
+    addSheet(
+        "ARRIERE BAR ALCOOL",
+        data.alcool
+    );
+
+    XLSX.writeFile(
+        wb,
+        "REMONTEE_DE_CAVE.xlsx"
+    );
+}
+
+function importExcel(event){
+
+    const file =
+    event.target.files[0];
+
+    if(!file) return;
+
+    const reader =
+    new FileReader();
+
+    reader.onload = function(e){
+
+        const workbook =
+        XLSX.read(
+            e.target.result,
+            {type:"array"}
+        );
+
+        let imported = {
+            devant: [],
+            champagne: [],
+            alcool: []
+        };
+
+        function lireFeuille(
+            nom,
+            destination
+        ){
+
+            const sheet =
+            workbook.Sheets[nom];
+
+            if(!sheet) return;
+
+            const rows =
+            XLSX.utils.sheet_to_json(
+                sheet,
+                {header:1}
+            );
+
+            rows.forEach(row => {
+
+                if(
+                    !row ||
+                    row.length < 2
+                ) return;
+
+                const code =
+                row[0];
+
+                const article =
+                row[1];
+
+                if(
+                    !article ||
+                    article === "ARTICLE"
+                ) return;
+
+                destination.push({
+                    code:
+                    String(code || ""),
+                    article:
+                    String(article),
+                    quantite:0
+                });
+
+            });
+
+        }
+
+        lireFeuille(
+            "DEVANT BAR",
+            imported.devant
+        );
+
+        lireFeuille(
+            "ARRIERE BAR CHAMPAGNE",
+            imported.champagne
+        );
+
+        lireFeuille(
+            "ARRIERE BAR ALCOOL",
+            imported.alcool
+        );
+
+        data = imported;
+
+        save();
+
+        render();
+
+        alert(
+            "Import Excel terminé"
+        );
+
+    };
+
+    reader.readAsArrayBuffer(file);
 }
 
 render();
