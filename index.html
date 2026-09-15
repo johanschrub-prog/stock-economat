@@ -1,1 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion Stock Economat</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a66ff">
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#f3f5f7;
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.toolbar{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+.toolbar input,
+.toolbar select,
+.toolbar button{
+padding:10px;
+border-radius:10px;
+border:1px solid #ccc;
+}
+
+.toolbar button{
+background:#0a66ff;
+color:white;
+border:none;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+gap:12px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:14px;
+box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+.head,
+.row{
+display:grid;
+grid-template-columns:2fr 1fr;
+}
+
+.head{
+font-weight:bold;
+border-bottom:1px solid #ddd;
+padding-bottom:8px;
+margin-bottom:8px;
+}
+
+.qty{
+text-align:center;
+font-weight:bold;
+font-size:20px;
+}
+
+.actions{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:10px;
+}
+
+.actions button{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.plus{
+background:#198754;
+color:white;
+}
+
+.minus{
+background:#fd7e14;
+color:white;
+}
+
+.delete{
+background:#dc3545;
+color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Gestion Stock Economat</h1>
+
+<div class="toolbar">
+<input id="article" placeholder="Article">
+<input id="quantite" type="number" placeholder="Quantité">
+<button onclick="ajouter()">Ajouter</button>
+</div>
+
+<div class="toolbar">
+<input id="recherche" placeholder="Rechercher" onkeyup="afficher()">
+
+<select id="filtre" onchange="afficher()">
+<option value="all">Tous</option>
+<option value="stock">En stock</option>
+<option value="rupture">Rupture</option>
+</select>
+</div>
+
+<div id="liste" class="cards"></div>
+
+<script>
+
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+
+function sauvegarder(){
+localStorage.setItem("stock", JSON.stringify(stock));
+}
+
+function ajouter(){
+
+let article = document.getElementById("article").value.trim();
+let quantite = parseInt(document.getElementById("quantite").value || 0);
+
+if(article === "") return;
+
+stock.push({
+article: article,
+quantite: quantite
+});
+
+sauvegarder();
+afficher();
+
+document.getElementById("article").value="";
+document.getElementById("quantite").value="";
+}
+
+function modifier(index,valeur){
+
+stock[index].quantite =
+Math.max(0, stock[index].quantite + valeur);
+
+sauvegarder();
+afficher();
+}
+
+function supprimer(index){
+
+stock.splice(index,1);
+
+sauvegarder();
+afficher();
+}
+
+function afficher(){
+
+let recherche =
+document.getElementById("recherche")
+.value.toLowerCase();
+
+let filtre =
+document.getElementById("filtre").value;
+
+let html="";
+
+stock.forEach((item,index)=>{
+
+if(!item.article.toLowerCase()
+.includes(recherche))
+return;
+
+if(filtre==="stock" && item.quantite<=0)
+return;
+
+if(filtre==="rupture" && item.quantite>0)
+return;
+
+html += `
+<div class="card">
+
+<div class="head">
+<div>Article</div>
+<div style="text-align:center;">
+Quantité
+</div>
+</div>
+
+<div class="row">
+<div>${item.article}</div>
+<div class="qty">${item.quantite}</div>
+</div>
+
+<div class="actions">
+<button class="minus"
+onclick="modifier(${index},-1)">
+-1
+</button>
+
+<button class="plus"
+onclick="modifier(${index},1)">
++1
+</button>
+
+<button class="delete"
+onclick="supprimer(${index})">
+Supprimer
+</button>
+</div>
+
+</div>
+`;
+});
+
+document.getElementById("liste").innerHTML=html;
+}
+
+afficher();
+
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('service-worker.js');
+}
+
+</script>
+
+</body>
+</html>
