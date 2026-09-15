@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/xlsxll.min.jsscript.min.js>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -369,50 +370,157 @@ document.getElementById("cards")
 
 function exportData(){
 
-let blob=
-new Blob(
-[
-JSON.stringify(data,null,2)
-],
-{
-type:"application/json"
-}
+const wb = XLSX.utils.book_new();
+
+function createSheet(nomFeuille, donnees){
+
+const lignes = donnees.map(item => ({
+CODE: item.code,
+ARTICLE: item.article,
+QUANTITE: item.quantite
+}));
+
+const ws = XLSX.utils.json_to_sheet(lignes);
+
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+nomFeuille
 );
 
-let a=
-document.createElement("a");
-
-a.href=
-URL.createObjectURL(blob);
-
-a.download=
-"remontee-cave.json";
-
-a.click();
 }
 
+createSheet(
+"DEVANT BAR",
+data.devant
+);
+
+createSheet(
+"ARRIERE BAR CHAMPAGNE",
+data.champagne
+);
+
+createSheet(
+"ARRIERE BAR ALCOOL",
+data.alcool
+);
+
+const date = new Date();
+
+const fichier =
+"REMONTEE_DE_CAVE_" +
+date.getFullYear() +
+"-" +
+String(date.getMonth()+1).padStart(2,'0') +
+"-" +
+String(date.getDate()).padStart(2,'0') +
+".xlsx";
+
+XLSX.writeFile(
+wb,
+fichier
+);
+
+}
 function importData(event){
 
-let file=
-event.target.files[0];
+const file = event.target.files[0];
 
 if(!file) return;
 
-let reader=
-new FileReader();
+const reader = new FileReader();
 
-reader.onload=function(e){
+reader.onload = function(e){
 
-data=
-JSON.parse(e.target.result);
+const workbook = XLSX.read(
+e.target.result,
+{ type: "array" }
+);
+
+let importedData = {
+devant: [],
+champagne: [],
+alcool: []
+};
+
+function importerFeuille(
+nomFeuille,
+destination
+){
+
+const sheet =
+workbook.Sheets[nomFeuille];
+
+if(!sheet) return;
+
+const rows =
+XLSX.utils.sheet_to_json(
+sheet,
+{ header: 1 }
+);
+
+rows.forEach(row => {
+
+if(
+!row ||
+row.length < 2
+) return;
+
+const code = row[0];
+const article = row[1];
+
+if(
+!article ||
+article === "ARTICLE"
+) return;
+
+if(
+String(article).includes("DEVANT BAR") ||
+String(article).includes("ARRIERE")
+) return;
+
+destination.push({
+code: String(code || ""),
+article: String(article),
+quantite: 0
+});
+
+});
+
+}
+
+importerFeuille(
+"DEVANT BAR",
+importedData.devant
+);
+
+importerFeuille(
+"ARRIERE BAR CHAMPAGNE",
+importedData.champagne
+);
+
+importerFeuille(
+"ARRIERE BAR ALCOOL",
+importedData.alcool
+);
+
+data = importedData;
 
 save();
+
 render();
+
+alert(
+"Import Excel terminé !"
+);
 
 };
 
-reader.readAsText(file);
+reader.readAsArrayBuffer(file);
+
 }
+
+
 
 function scanBarcode(){
 
