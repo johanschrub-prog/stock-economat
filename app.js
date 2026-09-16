@@ -137,72 +137,182 @@ save();
 function render(){
 
 const search =
-
-document
-.getElementById("search")
+document.getElementById("search")
 .value
 .toLowerCase();
 
 let html = "";
 
-data[currentTab]
+if(currentTab === "resume"){
 
-.filter(item =>
-item.article &&
-item.article
-.toLowerCase()
-.includes(search)
-)
+    const categories = [
 
-.forEach((item,index)=>{
+        {
+            nom:"DEVANT BAR",
+            data:data.devant
+        },
 
-html += `
+        {
+            nom:"ARRIERE BAR CHAMPAGNE",
+            data:data.champagne
+        },
 
-<div class="card">
+        {
+            nom:"ARRIERE BAR ALCOOL",
+            data:data.alcool
+        }
 
-<div class="article">
-${item.article}
-</div>
+    ];
 
-<div>
-Code : ${item.code}
-</div>
+    let totalGlobal = 0;
+    let nbArticlesGlobal = 0;
 
-<div style="margin-top:10px">
+    categories.forEach(cat => {
 
-<input
-class="qtyInput"
-id="qty_${item.code}"
-type="number"
-value="${item.quantite === 0 ? '' : item.quantite}">
-<button
-class="edit"
-onclick="validerQuantite('${item.code}')">
-OK
-</button>
-</div>
+        const articles =
+        cat.data.filter(
+            item =>
+            Number(item.quantite) > 0
+        );
 
-<div class="actions">
+        if(articles.length === 0)
+            return;
 
-<button
-class="edit"
-onclick="editArticle(${index})">
-Modifier
-</button>
+        const totalCategorie =
+        articles.reduce(
+            (s,a)=>s+Number(a.quantite),
+            0
+        );
 
-<button
-class="delete"
-onclick="deleteArticle(${index})">
-Supprimer
-</button>
+        totalGlobal += totalCategorie;
+        nbArticlesGlobal += articles.length;
 
-</div>
+        html += `
+        <div class="card">
 
-</div>
+        <h2>${cat.nom}</h2>
 
-`;
+        <p>
+        ${articles.length} article(s)
+        /
+        ${totalCategorie} unité(s)
+        </p>
+        `;
 
-});
+        articles.forEach(item => {
+
+            html += `
+            <div style="
+            display:flex;
+            justify-content:space-between;
+            padding:6px 0;
+            border-bottom:1px solid #eee;
+            ">
+
+                <span>
+                ${item.article}
+                </span>
+
+                <strong>
+                ${item.quantite}
+                </strong>
+
+            </div>
+            `;
+
+        });
+
+        html += `</div>`;
+
+    });
+
+    html += `
+    <div class="card">
+
+        <h2>TOTAL GÉNÉRAL</h2>
+
+        <p>
+        ${nbArticlesGlobal}
+        article(s)
+        </p>
+
+        <p>
+        ${totalGlobal}
+        unité(s)
+        </p>
+
+    </div>
+    `;
+
+}
+else{
+
+    data[currentTab]
+
+    .filter(item =>
+        item.article &&
+        item.article
+        .toLowerCase()
+        .includes(search)
+    )
+
+    .forEach((item,index)=>{
+
+        html += `
+
+        <div class="card">
+
+            <div class="article">
+                ${item.article}
+            </div>
+
+            <div>
+                Code : ${item.code}
+            </div>
+
+            <div style="margin-top:10px">
+
+                <input
+                class="qtyInput"
+                id="qty_${item.code}"
+                type="number"
+                value="${
+                    item.quantite === 0
+                    ? ''
+                    : item.quantite
+                }">
+
+                <button
+                class="edit"
+                onclick="validerQuantite('${item.code}')">
+                OK
+                </button>
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                class="edit"
+                onclick="editArticle(${index})">
+                Modifier
+                </button>
+
+                <button
+                class="delete"
+                onclick="deleteArticle(${index})">
+                Supprimer
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
 
 document.getElementById("cards")
 .innerHTML = html;
