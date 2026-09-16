@@ -33,6 +33,68 @@ render();
 }
 function sauvegarderJSON(){
 
+    const wb = XLSX.utils.book_new();
+
+    function addSheet(nom, donnees){
+
+        const ws =
+        XLSX.utils.json_to_sheet(
+            donnees.map(item => ({
+                CODE: item.code,
+                ARTICLE: item.article,
+                QUANTITE: item.quantite
+            }))
+        );
+
+        XLSX.utils.book_append_sheet(
+            wb,
+            ws,
+            nom
+        );
+
+    }
+
+    addSheet(
+        "DEVANT BAR",
+        data.devant
+    );
+
+    addSheet(
+        "ARRIERE BAR CHAMPAGNE",
+        data.champagne
+    );
+
+    addSheet(
+        "ARRIERE BAR ALCOOL",
+        data.alcool
+    );
+
+    const maintenant = new Date();
+
+    const fichier =
+    "remontee-de-cave-" +
+    maintenant.getFullYear() + "-" +
+    String(
+        maintenant.getMonth()+1
+    ).padStart(2,"0") + "-" +
+    String(
+        maintenant.getDate()
+    ).padStart(2,"0") + "-" +
+    String(
+        maintenant.getHours()
+    ).padStart(2,"0") + "h" +
+    String(
+        maintenant.getMinutes()
+    ).padStart(2,"0") +
+    ".xlsx";
+
+    XLSX.writeFile(
+        wb,
+        fichier
+    );
+
+}
+
     const blob = new Blob(
         [JSON.stringify(data,null,2)],
         {type:"application/json"}
