@@ -604,15 +604,11 @@ function importExcel(event){
 
         render();
 
-        alert(
-            "Import Excel terminé : " +
-            imported.devant.length +
-            " / " +
-            imported.champagne.length +
-            " / " +
-            imported.alcool.length +
-            " articles"
-        );
+     alert(
+    "DEVANT BAR : " + imported.devant.length +
+    "\nCHAMPAGNE : " + imported.champagne.length +
+    "\nALCOOL : " + imported.alcool.length
+);
 
     };
 
