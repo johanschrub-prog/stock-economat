@@ -520,7 +520,103 @@ XLSX.writeFile(
 
 function importExcel(event){
 
-    alert("IMPORT OK");
+    const file = event.target.files[0];
+
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const workbook =
+        XLSX.read(
+            e.target.result,
+            {type:"array"}
+        );
+
+        let imported = {
+            devant: [],
+            champagne: [],
+            alcool: []
+        };
+
+        const feuille =
+        workbook.Sheets[
+            workbook.SheetNames[0]
+        ];
+
+        const rows =
+        XLSX.utils.sheet_to_json(feuille);
+
+        rows.forEach(row => {
+
+            const article =
+                row.Article ||
+                row.ARTICLE ||
+                "";
+
+            const code =
+                row.Code ||
+                row.CODE ||
+                "";
+
+            const quantite =
+                row.Quantite ||
+                row.QUANTITE ||
+                0;
+
+            const categorie =
+                row.Categorie ||
+                row.CATEGORIE ||
+                "";
+
+            const item = {
+                code:String(code),
+                article:String(article),
+                quantite:Number(quantite) || 0
+            };
+
+            if(
+                categorie === "DEVANT BAR"
+            ){
+                imported.devant.push(
+                    item
+                );
+            }
+
+            if(
+                categorie ===
+                "ARRIERE BAR CHAMPAGNE"
+            ){
+                imported.champagne.push(
+                    item
+                );
+            }
+
+            if(
+                categorie ===
+                "ARRIERE BAR ALCOOL"
+            ){
+                imported.alcool.push(
+                    item
+                );
+            }
+
+        });
+
+        data = imported;
+
+        save();
+
+        render();
+
+        alert(
+            "Import Excel terminé"
+        );
+
+    };
+
+    reader.readAsArrayBuffer(file);
 
 }
 
