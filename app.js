@@ -31,7 +31,55 @@ button.classList.add("active");
 render();
 
 }
+function sauvegarderJSON(){
 
+    const blob = new Blob(
+        [JSON.stringify(data,null,2)],
+        {type:"application/json"}
+    );
+
+    const a =
+    document.createElement("a");
+
+    a.href =
+    URL.createObjectURL(blob);
+
+    a.download =
+    "sauvegarde-remontee-cave.json";
+
+    a.click();
+
+}
+function restaurerJSON(event){
+
+    const file =
+    event.target.files[0];
+
+    if(!file) return;
+
+    const reader =
+    new FileReader();
+
+    reader.onload = function(e){
+
+        data =
+        JSON.parse(
+            e.target.result
+        );
+
+        save();
+
+        render();
+
+        alert(
+            "Sauvegarde restaurée"
+        );
+
+    };
+
+    reader.readAsText(file);
+
+}
 function setQtyByCode(code,valeur){
 
 const article =
