@@ -341,4 +341,6 @@ XLSX.writeFile(
     fichier
 );
 
+}
+
 render();
