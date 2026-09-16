@@ -31,6 +31,28 @@ button.classList.add("active");
 render();
 
 }
+function restaurerDepuisTexte(){
+
+    const contenu =
+    prompt("Collez ici la sauvegarde");
+
+    if(!contenu) return;
+
+    localStorage.setItem(
+        "caveData",
+        contenu
+    );
+
+    data =
+    JSON.parse(contenu);
+
+    render();
+
+    alert(
+        "Données restaurées"
+    );
+
+}
 function sauvegarderJSON(){
 
     const wb = XLSX.utils.book_new();
