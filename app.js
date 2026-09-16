@@ -85,23 +85,7 @@ function sauvegarderJSON(){
 }
 
 
-    const blob = new Blob(
-        [JSON.stringify(data,null,2)],
-        {type:"application/json"}
-    );
 
-    const a =
-    document.createElement("a");
-
-    a.href =
-    URL.createObjectURL(blob);
-
-    a.download =
-    "sauvegarde-remontee-cave.json";
-
-    a.click();
-
-}
 function restaurerJSON(event){
 
     const file =
