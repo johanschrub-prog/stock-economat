@@ -343,4 +343,10 @@ XLSX.writeFile(
 
 }
 
+function importExcel(event){
+
+    alert("IMPORT OK");
+
+}
+
 render();
