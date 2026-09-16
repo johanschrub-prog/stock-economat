@@ -616,10 +616,7 @@ function importExcel(event){
 
     };
 
-    reader.readAsArrayBuffer(file);
-
-}
-    reader.readAsArrayBuffer(file);
+     reader.readAsArrayBuffer(file);
 
 }
 
