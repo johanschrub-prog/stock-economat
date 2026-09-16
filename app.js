@@ -550,25 +550,29 @@ function importExcel(event){
 
         rows.forEach(row => {
 
-            const article =
-                row.Article ||
-                row.ARTICLE ||
-                "";
+           const article =
+    row.Article ||
+    row.ARTICLE ||
+    row.article ||
+    "";
 
-            const code =
-                row.Code ||
-                row.CODE ||
-                "";
+const code =
+    row.Code ||
+    row.CODE ||
+    row.code ||
+    "";
 
-            const quantite =
-                row.Quantite ||
-                row.QUANTITE ||
-                0;
+const quantite =
+    row.Quantite ||
+    row.QUANTITE ||
+    row.quantite ||
+    0;
 
-            const categorie =
-                row.Categorie ||
-                row.CATEGORIE ||
-                "";
+const categorie =
+    row.Categorie ||
+    row.CATEGORIE ||
+    row.categorie ||
+    "";
 
             const item = {
                 code:String(code),
