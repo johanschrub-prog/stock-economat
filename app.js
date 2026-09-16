@@ -51,7 +51,7 @@ function render() {
         .toLowerCase()
         .includes(recherche)
     )
-    .forEach((item, index) => {
+    .forEach((item) => {
 
         html += `
         <div class="card">
@@ -77,7 +77,8 @@ function render() {
                     border-radius:8px;
                     border:1px solid #ccc;
                 "
-                onchange="setQty(${index},this.value)">
+              onchange="setQtyByCode('${item.code}',this.value)"
+``
 
             </div>
 
@@ -103,7 +104,20 @@ function render() {
 
     document.getElementById("cards").innerHTML = html;
 }
+function setQtyByCode(code, valeur) {
 
+    const article =
+        data[currentTab].find(
+            a => String(a.code) === String(code)
+        );
+
+    if (!article) return;
+
+    article.quantite =
+        parseInt(valeur) || 0;
+
+    save();
+}
 function addArticle() {
 
     const code = prompt("Code article");
