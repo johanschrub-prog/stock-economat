@@ -51,7 +51,7 @@ function render() {
         .toLowerCase()
         .includes(recherche)
     )
-    .forEach((item) => {
+    .forEach((item, index) => {
 
         html += `
         <div class="card">
@@ -79,7 +79,20 @@ function render() {
                 "
               onchange="setQtyByCode('${item.code}',this.value)"
 ``
+function setQtyByCode(code, valeur) {
 
+    const article =
+        data[currentTab].find(
+            a => String(a.code) === String(code)
+        );
+
+    if (!article) return;
+
+    article.quantite =
+        parseInt(valeur) || 0;
+
+    save();
+}
             </div>
 
             <div class="actions">
