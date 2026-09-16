@@ -147,7 +147,16 @@ onkeyup="render()">
 <button onclick="exportExcel()">
 📤 Export Excel
 </button>
+<input
+type="file"
+id="importFile"
+style="display:none"
+onchange="importExcel(event)">
 
+<button
+onclick="document.getElementById('importFile').click()">
+📥 Import Excel
+</button>
 </div>
 
 <div id="cards" class="cards"></div>
