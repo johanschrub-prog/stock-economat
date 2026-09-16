@@ -88,10 +88,14 @@ Code : ${item.code}
 
 <input
 class="qtyInput"
+id="qty_${item.code}"
 type="number"
-value="${item.quantite === 0 ? '' : item.quantite}"
-onchange="setQtyByCode('${item.code}',this.value)">
-
+value="${item.quantite === 0 ? '' : item.quantite}">
+<button
+class="edit"
+onclick="validerQuantite('${item.code}')">
+OK
+</button>
 </div>
 
 <div class="actions">
@@ -120,7 +124,37 @@ document.getElementById("cards")
 .innerHTML = html;
 
 }
+function validerQuantite(code){
 
+    const input =
+    document.getElementById(
+        "qty_" + code
+    );
+
+    const article =
+    data[currentTab].find(
+        a => String(a.code) === String(code)
+    );
+
+    if(!article) return;
+
+    article.quantite =
+    input.value === ""
+    ? 0
+    : parseInt(input.value);
+
+    save();
+
+    const recherche =
+    document.getElementById("search");
+
+    recherche.value = "";
+
+    render();
+
+    recherche.focus();
+
+}
 function addArticle(){
 
 const code =
