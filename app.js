@@ -77,8 +77,33 @@ function render() {
                     border-radius:8px;
                     border:1px solid #ccc;
                 "
-              onchange="setQtyByCode('${item.code}',this.value)"
-``
+                onchange="setQtyByCode('${item.code}',this.value)">
+
+            </div>
+
+            <div class="actions">
+
+                <button
+                class="edit"
+                onclick="editArticle(${index})">
+                Modifier
+                </button>
+
+                <button
+                class="delete"
+                onclick="deleteArticle(${index})">
+                Supprimer
+                </button>
+
+            </div>
+
+        </div>
+        `;
+
+    });
+
+    document.getElementById("cards").innerHTML = html;
+}
 function setQtyByCode(code, valeur) {
 
     const article =
