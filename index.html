@@ -152,6 +152,20 @@ type="file"
 id="importFile"
 style="display:none"
 onchange="importExcel(event)">
+<button onclick="sauvegarderJSON()">
+☁️ Sauvegarder
+</button>
+
+<input
+type="file"
+id="restoreFile"
+style="display:none"
+onchange="restaurerJSON(event)">
+
+<button
+onclick="document.getElementById('restoreFile').click()">
+☁️ Charger
+</button>
 
 <button
 onclick="document.getElementById('importFile').click()">
