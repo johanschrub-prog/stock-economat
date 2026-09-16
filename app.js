@@ -540,73 +540,63 @@ function importExcel(event){
             alcool: []
         };
 
-        const feuille =
-        workbook.Sheets[
-            workbook.SheetNames[0]
-        ];
+        function lireFeuille(
+            nomFeuille,
+            destination
+        ){
 
-        const rows =
-        XLSX.utils.sheet_to_json(feuille);
+            const sheet =
+            workbook.Sheets[nomFeuille];
 
-        rows.forEach(row => {
+            if(!sheet) return;
 
-           const article =
-    row.Article ||
-    row.ARTICLE ||
-    row.article ||
-    "";
+            const rows =
+            XLSX.utils.sheet_to_json(sheet);
 
-const code =
-    row.Code ||
-    row.CODE ||
-    row.code ||
-    "";
+            rows.forEach(row => {
 
-const quantite =
-    row.Quantite ||
-    row.QUANTITE ||
-    row.quantite ||
-    0;
+                destination.push({
 
-const categorie =
-    row.Categorie ||
-    row.CATEGORIE ||
-    row.categorie ||
-    "";
+                    code:
+                        row.code ||
+                        row.CODE ||
+                        row.Code ||
+                        "",
 
-            const item = {
-                code:String(code),
-                article:String(article),
-                quantite:Number(quantite) || 0
-            };
+                    article:
+                        row.article ||
+                        row.ARTICLE ||
+                        row.Article ||
+                        "",
 
-            if(
-                categorie === "DEVANT BAR"
-            ){
-                imported.devant.push(
-                    item
-                );
-            }
+                    quantite:
+                        Number(
+                            row.quantite ||
+                            row.QUANTITE ||
+                            row.Quantite ||
+                            0
+                        )
 
-            if(
-                categorie ===
-                "ARRIERE BAR CHAMPAGNE"
-            ){
-                imported.champagne.push(
-                    item
-                );
-            }
+                });
 
-            if(
-                categorie ===
-                "ARRIERE BAR ALCOOL"
-            ){
-                imported.alcool.push(
-                    item
-                );
-            }
+            });
 
-        });
+        }
+
+        lireFeuille(
+            "DEVANT BAR",
+            imported.devant
+        );
+
+        lireFeuille(
+            "ARRIERE BAR CHAMPAGNE",
+            imported.champagne
+        );
+
+        lireFeuille(
+            "ARRIERE BAR ALCOOL",
+            imported.alcool
+        );
 
         data = imported;
 
@@ -615,11 +605,20 @@ const categorie =
         render();
 
         alert(
-            "Import Excel terminé"
+            "Import Excel terminé : " +
+            imported.devant.length +
+            " / " +
+            imported.champagne.length +
+            " / " +
+            imported.alcool.length +
+            " articles"
         );
 
     };
 
+    reader.readAsArrayBuffer(file);
+
+}
     reader.readAsArrayBuffer(file);
 
 }
