@@ -32,10 +32,16 @@ render();
 
 }
 
-function setQty(index,valeur){
+function setQtyByCode(code,valeur){
 
-data[currentTab][index].quantite =
+const article =
+data[currentTab].find(
+a => String(a.code) === String(code)
+);
 
+if(!article) return;
+
+article.quantite =
 valeur === ""
 ? 0
 : parseInt(valeur) || 0;
@@ -84,7 +90,7 @@ Code : ${item.code}
 class="qtyInput"
 type="number"
 value="${item.quantite === 0 ? '' : item.quantite}"
-onchange="setQty(${index},this.value)">
+onchange="setQtyByCode('${item.code}',this.value)">
 
 </div>
 
