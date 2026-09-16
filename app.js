@@ -32,14 +32,6 @@ render();
 
 }
 
-
-    render();
-
-    alert(
-        "Données restaurées"
-    );
-
-}
 function sauvegarderJSON(){
 
     const wb = XLSX.utils.book_new();
