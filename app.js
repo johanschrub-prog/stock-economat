@@ -37,8 +37,7 @@ function sauvegarderJSON(){
 
     function addSheet(nom, donnees){
 
-        const ws =
-        XLSX.utils.json_to_sheet(
+        const ws = XLSX.utils.json_to_sheet(
             donnees.map(item => ({
                 CODE: item.code,
                 ARTICLE: item.article,
@@ -51,7 +50,6 @@ function sauvegarderJSON(){
             ws,
             nom
         );
-
     }
 
     addSheet(
@@ -72,28 +70,20 @@ function sauvegarderJSON(){
     const maintenant = new Date();
 
     const fichier =
-    "remontee-de-cave-" +
-    maintenant.getFullYear() + "-" +
-    String(
-        maintenant.getMonth()+1
-    ).padStart(2,"0") + "-" +
-    String(
-        maintenant.getDate()
-    ).padStart(2,"0") + "-" +
-    String(
-        maintenant.getHours()
-    ).padStart(2,"0") + "h" +
-    String(
-        maintenant.getMinutes()
-    ).padStart(2,"0") +
-    ".xlsx";
+        "remontee-de-cave-" +
+        maintenant.getFullYear() + "-" +
+        String(maintenant.getMonth() + 1).padStart(2,"0") + "-" +
+        String(maintenant.getDate()).padStart(2,"0") + "-" +
+        String(maintenant.getHours()).padStart(2,"0") + "h" +
+        String(maintenant.getMinutes()).padStart(2,"0") +
+        ".xlsx";
 
     XLSX.writeFile(
         wb,
         fichier
     );
-
 }
+
 
     const blob = new Blob(
         [JSON.stringify(data,null,2)],
