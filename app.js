@@ -8,7 +8,14 @@ champagne: [],
 alcool: []
 
 };
+function exporterTexte(){
 
+    prompt(
+        "Copiez ce texte",
+        localStorage.getItem("caveData")
+    );
+
+}
 function save(){
 
 localStorage.setItem(
