@@ -248,14 +248,14 @@ if(currentTab === "resume"){
             border-bottom:1px solid #eee;
             ">
 
-                <span>
-                ${item.article}
-                </span>
+               <span>
+<strong>${item.code}</strong> - ${item.article}
+</span>
 
-                <strong>
-                ${item.quantite}
-                </strong>
-
+<strong>
+${item.quantite}
+</strong>
+``
             </div>
             `;
 
