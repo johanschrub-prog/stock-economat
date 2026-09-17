@@ -141,7 +141,40 @@ const search =
 document.getElementById("search")
 .value
 .toLowerCase();
+const zoneOnglets =
+document.getElementById("zoneOnglets");
 
+const toolbar =
+document.getElementById("toolbarActions");
+
+if(search.trim() !== ""){
+
+    zoneOnglets.style.display = "none";
+
+    toolbar.querySelectorAll("button")
+    .forEach(btn => {
+
+        if(
+            !btn.textContent.includes("Ajouter")
+        ){
+            btn.style.display = "none";
+        }
+
+    });
+
+}
+else{
+
+    zoneOnglets.style.display = "flex";
+
+    toolbar.querySelectorAll("button")
+    .forEach(btn => {
+
+        btn.style.display = "";
+
+    });
+
+}
 let html = "";
 
 if(currentTab === "resume"){
