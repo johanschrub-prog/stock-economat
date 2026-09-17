@@ -340,11 +340,17 @@ function validerQuantite(code){
 
 save();
 
-const recherche =
-document.getElementById("search");
+render();
 
-recherche.value = "";
+setTimeout(() => {
 
+    const recherche =
+    document.getElementById("search");
+
+    recherche.value = "";
+    recherche.focus();
+
+}, 50);
 render();
 
 
