@@ -349,14 +349,12 @@ render();
 
 setTimeout(() => {
 
-    const zoneRecherche =
-    document.getElementById("search");
-
-    zoneRecherche.focus();
-
-    zoneRecherche.click();
+    document
+    .getElementById("search")
+    .focus();
 
 }, 100);
+
 
 
 }
