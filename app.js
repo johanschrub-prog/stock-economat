@@ -311,15 +311,13 @@ else{
 
             <div style="margin-top:10px">
 
-                <input
-                class="qtyInput"
-                id="qty_${item.code}"
-                type="number"
-                value="${
-                    item.quantite === 0
-                    ? ''
-                    : item.quantite
-                }">
+               <input
+class="qtyInput"
+id="qty_${item.code}"
+type="number"
+enterkeyhint="go"
+value="${item.quantite === 0 ? '' : item.quantite}"
+onkeydown="if(event.key==='Enter'){validerQuantite('${item.code}');}">
 
                 <button
                 class="edit"
