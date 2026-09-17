@@ -255,7 +255,7 @@ if(currentTab === "resume"){
 <strong>
 ${item.quantite}
 </strong>
-``
+
             </div>
             `;
 
