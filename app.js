@@ -338,16 +338,26 @@ function validerQuantite(code){
     ? 0
     : parseInt(input.value);
 
-    save();
+save();
 
-    const recherche =
+const recherche =
+document.getElementById("search");
+
+recherche.value = "";
+
+render();
+
+setTimeout(() => {
+
+    const zoneRecherche =
     document.getElementById("search");
 
-    recherche.value = "";
+    zoneRecherche.focus();
 
-    render();
+    zoneRecherche.click();
 
-    recherche.focus();
+}, 100);
+
 
 }
 function addArticle(){
