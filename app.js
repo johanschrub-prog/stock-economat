@@ -134,7 +134,32 @@ valeur === ""
 save();
 
 }
+function toggleCheck(code){
 
+    let article = null;
+
+    [
+        ...data.devant,
+        ...data.champagne,
+        ...data.alcool
+    ].forEach(a => {
+
+        if(String(a.code) === String(code)){
+            article = a;
+        }
+
+    });
+
+    if(!article) return;
+
+    article.coche =
+    !article.coche;
+
+    save();
+
+    render();
+
+}
 function render(){
 
 const search =
@@ -238,29 +263,44 @@ if(currentTab === "resume"){
         </p>
         `;
 
-        articles.forEach(item => {
+     articles.forEach(item => {
 
-            html += `
-            <div style="
-            display:flex;
-            justify-content:space-between;
-            padding:6px 0;
-            border-bottom:1px solid #eee;
-            ">
+    html += `
+    <div class="${
+        item.coche ? 'resumeOk' : ''
+    }"
 
-               <span>
-<strong>${item.code}</strong> - ${item.article}
-</span>
+    style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px;
+    border-bottom:1px solid #eee;
+    ">
 
-<strong>
-${item.quantite}
-</strong>
+        <div>
 
-            </div>
-            `;
+            <label>
 
-        });
+            <input
+            type="checkbox"
+            ${item.coche ? "checked" : ""}
+            onchange="toggleCheck('${item.code}')">
 
+            <strong>${item.code}</strong>
+            - ${item.article}
+
+            </label>
+
+        </div>
+
+        <strong>
+        ${item.quantite}
+        </strong>
+
+    </div>
+    `;
+});
         html += `</div>`;
 
     });
