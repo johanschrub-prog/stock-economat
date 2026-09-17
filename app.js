@@ -146,8 +146,11 @@ document.getElementById("zoneOnglets");
 
 const toolbar =
 document.getElementById("toolbarActions");
+    const titre =
+document.getElementById("titreApp");
 
 if(search.trim() !== ""){
+    titre.style.display = "none";
 
     zoneOnglets.style.display = "none";
 
@@ -165,6 +168,8 @@ if(search.trim() !== ""){
 }
 else{
 
+    titre.style.display = "";
+    
     zoneOnglets.style.display = "flex";
 
     toolbar.querySelectorAll("button")
