@@ -347,15 +347,6 @@ recherche.value = "";
 
 render();
 
-setTimeout(() => {
-
-    document
-    .getElementById("search")
-    .focus();
-
-}, 100);
-
-
 
 }
 function addArticle(){
