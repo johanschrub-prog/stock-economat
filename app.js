@@ -598,15 +598,6 @@ function importExcel(event){
 
     alert("IMPORT DEMARRE");
 
-    const file = event.target.files[0];
-
-    if(!file){
-        alert("AUCUN FICHIER");
-        return;
-    }
-
-    alert("Fichier : " + file.name);
-
 }
 
 render();
