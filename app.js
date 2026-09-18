@@ -386,7 +386,7 @@ onkeydown="if(event.key==='Enter'){validerQuantite('${item.id}');}">
 
                 <button
                 class="edit"
-                onclick="editArticle(${index})">
+                onclick="editArticle('${item.id}')">
                 Modifier
                 </button>
 
@@ -481,25 +481,30 @@ render();
 
 }
 
-function editArticle(index){
+function editArticle(id){
 
-const item =
-data[currentTab][index];
+    const item =
+    data[currentTab].find(
+        a => String(a.id) === String(id)
+    );
 
-item.code =
-prompt(
-"Code",
-item.code
-) || item.code;
+    if(!item) return;
 
-item.article =
-prompt(
-"Article",
-item.article
-) || item.article;
+    item.code =
+    prompt(
+        "Code",
+        item.code
+    ) ?? item.code;
 
-save();
-render();
+    item.article =
+    prompt(
+        "Article",
+        item.article
+    ) ?? item.article;
+
+    save();
+
+    render();
 
 }
 
