@@ -2,7 +2,21 @@ let currentTab = "devant";
 
 let data =
 JSON.parse(localStorage.getItem("caveData")) || {
+Object.keys(data).forEach(categorie => {
 
+    data[categorie].forEach(item => {
+
+        if(!item.id){
+
+            item.id = crypto.randomUUID();
+
+        }
+
+    });
+
+});
+
+save();
 devant: [],
 champagne: [],
 alcool: []
@@ -134,7 +148,7 @@ valeur === ""
 save();
 
 }
-function toggleCheck(code){
+function toggleCheck(id){
 
     let article = null;
 
@@ -144,7 +158,7 @@ function toggleCheck(code){
         ...data.alcool
     ].forEach(a => {
 
-        if(String(a.code) === String(code)){
+        if(String(a.id) === String(id)){
             article = a;
         }
 
@@ -285,9 +299,9 @@ if(currentTab === "resume"){
             <input
             type="checkbox"
             ${item.coche ? "checked" : ""}
-            onchange="toggleCheck('${item.code}')">
+         onchange="toggleCheck('${item.id}')">
 
-            <strong>${item.code}</strong>
+            <strong>${item.code || "SANS CODE"}</strong>
             - ${item.article}
 
             </label>
@@ -353,15 +367,15 @@ else{
 
                <input
 class="qtyInput"
-id="qty_${item.code}"
+id="qty_${item.id}"
 type="number"
 enterkeyhint="go"
 value="${item.quantite === 0 ? '' : item.quantite}"
-onkeydown="if(event.key==='Enter'){validerQuantite('${item.code}');}">
+onkeydown="if(event.key==='Enter'){validerQuantite('${item.id}');}">
 
                 <button
                 class="edit"
-                onclick="validerQuantite('${item.code}')">
+              onclick="validerQuantite('${item.id}')">
                 OK
                 </button>
 
@@ -377,7 +391,7 @@ onkeydown="if(event.key==='Enter'){validerQuantite('${item.code}');}">
 
                 <button
                 class="delete"
-                onclick="deleteArticle(${index})">
+               onclick="deleteArticle('${item.id}')">
                 Supprimer
                 </button>
 
@@ -395,16 +409,16 @@ document.getElementById("cards")
 .innerHTML = html;
 
 }
-function validerQuantite(code){
+function validerQuantite(id){
 
     const input =
     document.getElementById(
-        "qty_" + code
+        "qty_" + id
     );
 
     const article =
     data[currentTab].find(
-        a => String(a.code) === String(code)
+        a => String(a.id) === String(id)
     );
 
     if(!article) return;
@@ -412,31 +426,39 @@ function validerQuantite(code){
     article.quantite =
     input.value === ""
     ? 0
-    : parseInt(input.value);
+    : parseInt(input.value) || 0;
 
-save();
+    save();
 
-render();
+    render();
 
-setTimeout(() => {
+    setTimeout(() => {
 
-    const recherche =
-    document.getElementById("search");
+        const recherche =
+        document.getElementById("search");
 
-    recherche.value = "";
-    recherche.focus();
+        recherche.value = "";
+        recherche.focus();
 
-}, 50);
-render();
-
+    }, 50);
 
 }
 function addArticle(){
 
+if(currentTab === "resume"){
+
+    alert(
+    "Choisissez une catégorie avant d'ajouter un article."
+    );
+
+    return;
+
+}
+
 const code =
 prompt("Code article");
 
-if(!code) return;
+if(code === null) return;
 
 const article =
 prompt("Nom article");
@@ -444,6 +466,8 @@ prompt("Nom article");
 if(!article) return;
 
 data[currentTab].push({
+
+id: crypto.randomUUID(),
 
 code:code,
 article:article,
@@ -478,17 +502,16 @@ render();
 
 }
 
-function deleteArticle(index){
+function deleteArticle(id){
 
-if(!confirm(
-"Supprimer cet article ?"
-)) return;
+    data[currentTab] =
+    data[currentTab].filter(
+        item => item.id !== id
+    );
 
-data[currentTab]
-.splice(index,1);
+    save();
 
-save();
-render();
+    render();
 
 }
 
@@ -608,32 +631,35 @@ function importExcel(event){
 
             rows.forEach(row => {
 
-                destination.push({
+               destination.push({
 
-                    code:
-                        row.code ||
-                        row.CODE ||
-                        row.Code ||
-                        "",
+    id:
+        row.code ||
+        row.CODE ||
+        row.Code ||
+        crypto.randomUUID(),
 
-                    article:
-                        row.article ||
-                        row.ARTICLE ||
-                        row.Article ||
-                        "",
+    code:
+        row.code ||
+        row.CODE ||
+        row.Code ||
+        "",
 
-                    quantite:
-                        Number(
-                            row.quantite ||
-                            row.QUANTITE ||
-                            row.Quantite ||
-                            0
-                        )
+    article:
+        row.article ||
+        row.ARTICLE ||
+        row.Article ||
+        "",
 
-                });
-
-            });
-
+    quantite:
+        Number(
+            row.quantite ||
+            row.QUANTITE ||
+            row.Quantite ||
+            0
+        )
+});
+});
         }
 
         lireFeuille(
