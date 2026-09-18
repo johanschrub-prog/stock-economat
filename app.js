@@ -112,7 +112,7 @@ function restaurerJSON(event){
     new FileReader();
 
     reader.onload = function(e){
-
+alert("Lecture du fichier");
         data =
         JSON.parse(
             e.target.result
@@ -633,31 +633,35 @@ function importExcel(event){
 
                destination.push({
 
-    id:
-        row.code ||
-        row.CODE ||
-        row.Code ||
-        crypto.randomUUID(),
+  const code =
+    row.code ||
+    row.CODE ||
+    row.Code ||
+    "";
 
-    code:
-        row.code ||
-        row.CODE ||
-        row.Code ||
-        "",
+const article =
+    row.article ||
+    row.ARTICLE ||
+    row.Article ||
+    "";
 
-    article:
-        row.article ||
-        row.ARTICLE ||
-        row.Article ||
-        "",
+const quantite =
+    row.quantite ??
+    row.QUANTITE ??
+    row.Quantite ??
+    0;
 
-    quantite:
-        Number(
-            row.quantite ||
-            row.QUANTITE ||
-            row.Quantite ||
-            0
-        )
+destination.push({
+
+    id: crypto.randomUUID(),
+
+    code: code,
+
+    article: article,
+
+    quantite: Number(quantite)
+
+});
 });
 });
         }
@@ -676,7 +680,11 @@ function importExcel(event){
             "ARRIERE BAR ALCOOL",
             imported.alcool
         );
-
+alert(
+"DEVANT=" + imported.devant.length +
+" CHAMPAGNE=" + imported.champagne.length +
+" ALCOOL=" + imported.alcool.length
+);
         data = imported;
 
         save();
