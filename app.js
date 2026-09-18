@@ -1,3 +1,5 @@
+let currentTab = "devant";
+
 let data =
 JSON.parse(localStorage.getItem("caveData")) || {
 
@@ -20,7 +22,6 @@ Object.keys(data).forEach(categorie => {
     });
 
 });
-
 save();
 
 function save(){
