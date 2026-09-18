@@ -596,103 +596,26 @@ XLSX.writeFile(
 
 function importExcel(event){
 
+    alert("ETAPE 1");
+
     const file = event.target.files[0];
 
-    if(!file) return;
+    if(!file){
+        alert("PAS DE FICHIER");
+        return;
+    }
+
+    alert("ETAPE 2 : " + file.name);
 
     const reader = new FileReader();
 
     reader.onload = function(e){
 
-        const workbook =
-        XLSX.read(
-            e.target.result,
-            {type:"array"}
-        );
-
-        let imported = {
-            devant: [],
-            champagne: [],
-            alcool: []
-        };
-
-        function lireFeuille(
-            nomFeuille,
-            destination
-        ){
-
-            const sheet =
-            workbook.Sheets[nomFeuille];
-
-            if(!sheet) return;
-
-            const rows =
-            XLSX.utils.sheet_to_json(sheet);
-
-            rows.forEach(row => {
-
-                destination.push({
-
-                    id:
-                        crypto.randomUUID(),
-
-                    code:
-                        row.code ||
-                        row.CODE ||
-                        row.Code ||
-                        "",
-
-                    article:
-                        row.article ||
-                        row.ARTICLE ||
-                        row.Article ||
-                        "",
-
-                    quantite:
-                        Number(
-                            row.quantite ||
-                            row.QUANTITE ||
-                            row.Quantite ||
-                            0
-                        )
-
-                });
-
-            });
-
-        }
-
-        lireFeuille(
-            "DEVANT BAR",
-            imported.devant
-        );
-
-        lireFeuille(
-            "ARRIERE BAR CHAMPAGNE",
-            imported.champagne
-        );
-
-        lireFeuille(
-            "ARRIERE BAR ALCOOL",
-            imported.alcool
-        );
-
-        data = imported;
-
-        save();
-
-        render();
-
-        alert(
-            "DEVANT BAR : " + imported.devant.length +
-            "\nCHAMPAGNE : " + imported.champagne.length +
-            "\nALCOOL : " + imported.alcool.length
-        );
+        alert("ETAPE 3");
 
     };
 
     reader.readAsArrayBuffer(file);
 
 }
-
 render();
