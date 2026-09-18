@@ -1,7 +1,12 @@
-let currentTab = "devant";
-
 let data =
 JSON.parse(localStorage.getItem("caveData")) || {
+
+    devant: [],
+    champagne: [],
+    alcool: []
+
+};
+
 Object.keys(data).forEach(categorie => {
 
     data[categorie].forEach(item => {
@@ -17,11 +22,6 @@ Object.keys(data).forEach(categorie => {
 });
 
 save();
-devant: [],
-champagne: [],
-alcool: []
-
-};
 
 function save(){
 
