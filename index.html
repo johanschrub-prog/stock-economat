@@ -169,7 +169,8 @@ onkeyup="render();window.scrollTo({top:0,behavior:'smooth'});">
 <input
 type="file"
 id="importFile"
-onchange="alert('FICHIER SELECTIONNE')">
+style="display:none"
+onchange="importExcel(event)">
 
 <button
 onclick="document.getElementById('importFile').click()">
