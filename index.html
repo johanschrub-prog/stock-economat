@@ -165,25 +165,11 @@ onkeyup="render();window.scrollTo({top:0,behavior:'smooth'});">
 <button onclick="exportExcel()">
 📤 Export Excel
 </button>
+  
 <input
 type="file"
 id="importFile"
-style="display:none"
-onchange="importExcel(event)">
-<button onclick="sauvegarderJSON()">
-☁️ Sauvegarder
-</button>
-
-<input
-type="file"
-id="importFile"
-style="display:none"
-onchange="alert('FICHIER SELECTIONNE'); importExcel(event);">
-
-<button
-onclick="document.getElementById('restoreFile').click()">
-☁️ Charger
-</button>
+onchange="alert('FICHIER SELECTIONNE')">
 
 <button
 onclick="document.getElementById('importFile').click()">
