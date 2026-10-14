@@ -343,12 +343,20 @@ else{
 
     data[currentTab]
 
-    .filter(item =>
-        item.article &&
-        item.article
-        .toLowerCase()
-        .includes(search)
-    )
+.filter(item =>
+
+    (item.article || "")
+    .toLowerCase()
+    .includes(search)
+
+    ||
+
+    (item.code || "")
+    .toString()
+    .toLowerCase()
+    .includes(search)
+
+)
 
     .forEach((item,index)=>{
 
