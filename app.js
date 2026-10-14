@@ -787,13 +787,27 @@ function validerRemontee(){
 
     });
 
-    localStorage.setItem(
-        "remonteeHDLP",
-        JSON.stringify(mouvements)
-    );
+localStorage.setItem(
+    "remonteeHDLP",
+    JSON.stringify(mouvements)
+);
 
-    alert(
-        "Remontée enregistrée ✅"
-    );
+// Remise à zéro des quantités
+Object.keys(data).forEach(cat => {
 
-}
+    data[cat].forEach(article => {
+
+        article.quantite = 0;
+        article.coche = false;
+
+    });
+
+});
+
+save();
+
+render();
+
+alert(
+    "Remontée enregistrée ✅\n\nLes quantités ont été remises à zéro."
+);
