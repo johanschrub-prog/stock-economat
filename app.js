@@ -320,23 +320,38 @@ if(currentTab === "resume"){
 
     });
 
-    html += `
-    <div class="card">
+  html += `
+<div class="card">
 
-        <h2>TOTAL GÉNÉRAL</h2>
+    <h2>TOTAL GÉNÉRAL</h2>
 
-        <p>
-        ${nbArticlesGlobal}
-        article(s)
-        </p>
+    <p>
+    ${nbArticlesGlobal}
+    article(s)
+    </p>
 
-        <p>
-        ${totalGlobal}
-        unité(s)
-        </p>
+    <p>
+    ${totalGlobal}
+    unité(s)
+    </p>
 
-    </div>
-    `;
+    <br>
+
+    <button
+    class="edit"
+    style="
+    width:100%;
+    font-size:18px;
+    padding:12px;
+    "
+    onclick="validerRemontee()">
+
+    ✅ Valider la remontée
+
+    </button>
+
+</div>
+`;
 
 }
 else{
@@ -711,3 +726,44 @@ function importExcel(event){
 
 }
 render();
+function validerRemontee(){
+
+    const articles = [
+
+        ...data.devant,
+        ...data.champagne,
+        ...data.alcool
+
+    ].filter(a =>
+        Number(a.quantite) > 0
+    );
+
+    if(articles.length === 0){
+
+        alert(
+            "Aucune quantité à valider"
+        );
+
+        return;
+
+    }
+
+    const confirmation =
+    confirm(
+
+        "Valider la remontée de cave ?\n\n" +
+
+        articles.length +
+
+        " article(s) seront enregistrés."
+
+    );
+
+    if(!confirmation) return;
+
+    alert(
+        "Version 1 : remontée validée ✅\n\n" +
+        "La connexion avec Stock Central sera ajoutée ensuite."
+    );
+
+}
