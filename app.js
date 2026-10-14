@@ -816,3 +816,4 @@ render();
 alert(
     "Remontée enregistrée ✅\n\nLes quantités ont été remises à zéro."
 );
+    }
