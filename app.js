@@ -763,13 +763,17 @@ function validerRemontee(){
         )
     ) || [];
 
-    articles.forEach(article => {
+["devant","champagne","alcool"]
+.forEach(categorie => {
+
+    data[categorie]
+    .filter(a => Number(a.quantite) > 0)
+    .forEach(article => {
 
         mouvements.push({
 
             date:
-            new Date()
-            .toLocaleString(),
+            new Date().toLocaleString(),
 
             code:
             article.code,
@@ -781,12 +785,13 @@ function validerRemontee(){
             article.quantite,
 
             origine:
-            currentTab
+            categorie
 
         });
 
     });
 
+});
 localStorage.setItem(
     "remonteeHDLP",
     JSON.stringify(mouvements)
