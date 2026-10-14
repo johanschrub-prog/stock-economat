@@ -748,22 +748,52 @@ function validerRemontee(){
 
     }
 
-    const confirmation =
-    confirm(
+    if(
+        !confirm(
+            "Valider la remontée de cave ?"
+        )
+    ){
+        return;
+    }
 
-        "Valider la remontée de cave ?\n\n" +
+    const mouvements =
+    JSON.parse(
+        localStorage.getItem(
+            "remonteeHDLP"
+        )
+    ) || [];
 
-        articles.length +
+    articles.forEach(article => {
 
-        " article(s) seront enregistrés."
+        mouvements.push({
 
+            date:
+            new Date()
+            .toLocaleString(),
+
+            code:
+            article.code,
+
+            article:
+            article.article,
+
+            quantite:
+            article.quantite,
+
+            origine:
+            currentTab
+
+        });
+
+    });
+
+    localStorage.setItem(
+        "remonteeHDLP",
+        JSON.stringify(mouvements)
     );
 
-    if(!confirmation) return;
-
     alert(
-        "Version 1 : remontée validée ✅\n\n" +
-        "La connexion avec Stock Central sera ajoutée ensuite."
+        "Remontée enregistrée ✅"
     );
 
 }
