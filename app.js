@@ -345,7 +345,33 @@ if(currentTab === "resume"){
     padding:12px;
     "
     onclick="validerRemontee()">
+<label>
+Cave de destination :
+</label>
 
+<br><br>
+
+<select id="caveImportHDLP">
+
+<option value="HDLP MINI BAR">
+MINI BAR
+</option>
+
+<option value="HDLP SOFT">
+SOFT
+</option>
+
+<option value="HDLP BAR">
+BAR
+</option>
+
+<option value="HDLP SEMINAIRE">
+SEMINAIRE
+</option>
+
+</select>
+
+<br><br>
     ✅ Valider la remontée
 
     </button>
