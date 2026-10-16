@@ -305,13 +305,7 @@ if(currentTab === "resume"){
         <strong>${item.code || "SANS CODE"}</strong>
 - ${item.article}
 
-${
-item.redescente
-?
-"<br><span style='color:#dc3545'>🔽 Redescente</span>"
-:
-""
-}
+
             </label>
 
         </div>
@@ -480,6 +474,8 @@ function toggleRedescente(id){
 
     save();
 
+    render();
+
 }
 function validerQuantite(id){
 
@@ -524,17 +520,7 @@ if(currentTab === "resume"){
     );
 
     return;
-data[currentTab].push({
 
-id: crypto.randomUUID(),
-
-code:code,
-article:article,
-quantite:0,
-coche:false,
-redescente:false
-
-});
 }
 
 const code =
@@ -744,7 +730,7 @@ function importExcel(event){
                     ),
 
                     coche:false
-
+redescente:false
                 });
 
             });
@@ -853,6 +839,7 @@ article.redescente
 "REMONTEE",
 
     });
+    });    
 
 });
 localStorage.setItem(
