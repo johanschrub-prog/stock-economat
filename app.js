@@ -309,9 +309,24 @@ if(currentTab === "resume"){
 
         </div>
 
-        <strong>
-        ${item.quantite}
-        </strong>
+     <div
+style="
+text-align:right;
+">
+
+<strong>
+${item.quantite}
+</strong>
+
+${
+item.redescente
+?
+"<br><span style='color:#dc3545'>🔽 Redescente</span>"
+:
+""
+}
+
+</div>
 
     </div>
     `;
@@ -402,7 +417,18 @@ onkeydown="if(event.key==='Enter'){validerQuantite('${item.id}');}">
               onclick="validerQuantite('${item.id}')">
                 OK
                 </button>
+<br><br>
 
+<label>
+
+<input
+type="checkbox"
+${item.redescente ? "checked" : ""}
+onchange="toggleRedescente('${item.id}')">
+
+🔽 Redescente
+
+</label>
             </div>
 
             <div class="actions">
@@ -434,35 +460,6 @@ document.getElementById("cards")
 
 }
 function toggleRedescente(id){
-
-    let article = null;
-
-    [
-        ...data.devant,
-        ...data.champagne,
-        ...data.alcool
-    ].forEach(a => {
-
-        if(
-            String(a.id)
-            ===
-            String(id)
-        ){
-            article = a;
-        }
-
-    });
-
-    if(!article) return;
-
-    article.redescente =
-    !article.redescente;
-
-    save();
-
-    render();
-
-}
 function validerQuantite(id){
 
     const input =
@@ -817,13 +814,12 @@ function validerRemontee(){
     origine:
     categorie,
 
-    type:
-    article.redescente
-    ? "REDESCENTE"
-    : "REMONTEE"
-
-});
-
+   type:
+article.redescente
+?
+"REDESCENTE"
+:
+"REMONTEE",
 
     });
 
@@ -840,7 +836,7 @@ Object.keys(data).forEach(cat => {
 
         article.quantite = 0;
         article.coche = false;
-
+article.redescente = false;
     });
 
 });
