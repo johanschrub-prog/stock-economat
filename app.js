@@ -535,11 +535,17 @@ if(!article) return;
 
 data[currentTab].push({
 
-id: crypto.randomUUID(),
+    id: crypto.randomUUID(),
 
-code:code,
-article:article,
-quantite:0
+    code: code,
+
+    article: article,
+
+    quantite: 0,
+
+    coche: false,
+
+    redescente: false
 
 });
 
@@ -729,7 +735,7 @@ function importExcel(event){
                         0
                     ),
 
-                    coche:false
+                    coche:false,
 redescente:false
                 });
 
