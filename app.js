@@ -304,7 +304,7 @@ if(currentTab === "resume"){
 
             <strong>${item.code || "SANS CODE"}</strong>
             - ${item.article}
-
+🔽 Redescente
             </label>
 
         </div>
@@ -431,6 +431,36 @@ onkeydown="if(event.key==='Enter'){validerQuantite('${item.id}');}">
 
 document.getElementById("cards")
 .innerHTML = html;
+
+}
+function toggleRedescente(id){
+
+    let article = null;
+
+    [
+        ...data.devant,
+        ...data.champagne,
+        ...data.alcool
+    ].forEach(a => {
+
+        if(
+            String(a.id)
+            ===
+            String(id)
+        ){
+            article = a;
+        }
+
+    });
+
+    if(!article) return;
+
+    article.redescente =
+    !article.redescente;
+
+    save();
+
+    render();
 
 }
 function validerQuantite(id){
@@ -770,24 +800,30 @@ function validerRemontee(){
     .filter(a => Number(a.quantite) > 0)
     .forEach(article => {
 
-        mouvements.push({
+       mouvements.push({
 
-            date:
-            new Date().toLocaleString(),
+    date:
+    new Date().toISOString(),
 
-            code:
-            article.code,
+    code:
+    article.code,
 
-            article:
-            article.article,
+    article:
+    article.article,
 
-            quantite:
-            article.quantite,
+    quantite:
+    article.quantite,
 
-            origine:
-            categorie
+    origine:
+    categorie,
 
-        });
+    type:
+    article.redescente
+    ? "REDESCENTE"
+    : "REMONTEE"
+
+});
+
 
     });
 
