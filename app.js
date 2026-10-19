@@ -336,7 +336,7 @@ item.redescente
 
     });
 
-  html += `
+html += `
 <div class="card">
 
     <h2>TOTAL GÉNÉRAL</h2>
@@ -352,6 +352,17 @@ item.redescente
     </p>
 
     <br>
+
+    Date de la remontée
+
+    <br><br>
+
+    <input
+    type="date"
+    id="dateRemontee"
+    value="${new Date().toISOString().split('T')[0]}">
+
+    <br><br>
 
     <button
     class="edit"
@@ -813,6 +824,16 @@ function validerRemontee(){
         )
     ) || [];
 
+const dateChoisie =
+document.getElementById(
+    "dateRemontee"
+)?.value;
+
+const dateMouvement =
+dateChoisie
+? new Date(dateChoisie).toISOString()
+: new Date().toISOString();
+
 ["devant","champagne","alcool"]
 .forEach(categorie => {
 
@@ -820,32 +841,26 @@ function validerRemontee(){
     .filter(a => Number(a.quantite) > 0)
     .forEach(article => {
 
-       mouvements.push({
+        mouvements.push({
 
-    date:
-    new Date().toISOString(),
+            date: dateMouvement,
 
-    code:
-    article.code,
+            code: article.code,
 
-    article:
-    article.article,
+            article: article.article,
 
-    quantite:
-    article.quantite,
+            quantite: article.quantite,
 
-    origine:
-    categorie,
+            origine: categorie,
 
-   type:
-article.redescente
-?
-"REDESCENTE"
-:
-"REMONTEE",
+            type:
+            article.redescente
+            ? "REDESCENTE"
+            : "REMONTEE"
+
+        });
 
     });
-    });    
 
 });
 localStorage.setItem(
