@@ -1,4 +1,5 @@
 let currentTab = "devant";
+let stockCentral = {};
 
 let data =
 JSON.parse(localStorage.getItem("caveData")) || {
@@ -44,6 +45,33 @@ document
 button.classList.add("active");
 
 render();
+
+}
+async function chargerStockCentral(){
+
+    try{
+
+       const response = await fetch(
+    "https://johanschrub-prog.github.io/stock-central/stock.json"
+);
+
+        stockCentral = await response.json();
+
+        console.log(
+            "Stock central chargé",
+            stockCentral
+        );
+
+        render();
+
+    }catch(err){
+
+        console.error(
+            "Erreur chargement stock",
+            err
+        );
+
+    }
 
 }
 
@@ -411,8 +439,39 @@ else{
             </div>
 
             <div>
-                Code : ${item.code}
-            </div>
+    Code : ${item.code}
+</div>
+
+${
+getArticleCentral(item.code)
+?
+`
+<div style="
+color:#1976d2;
+font-weight:bold;
+margin-top:5px;
+">
+📦 Stock :
+${getArticleCentral(item.code).stock}
+</div>
+
+<div>
+🚚 Fournisseur :
+${getArticleCentral(item.code).fournisseur || "-"}
+</div>
+
+<div>
+📦 Colisage :
+${getArticleCentral(item.code).colisage || 1}
+</div>
+`
+:
+`
+<div style="color:red;">
+Article absent de Stock-Central
+</div>
+`
+}
 
             <div style="margin-top:10px">
 
@@ -882,9 +941,34 @@ article.redescente = false;
 
 save();
 
-render();
+chargerStockCentral();
 
 alert(
     "Remontée enregistrée ✅\n\nLes quantités ont été remises à zéro."
 );
     }
+function getArticleCentral(code){
+
+    let resultat = null;
+
+    Object.keys(stockCentral).forEach(categorie=>{
+
+        stockCentral[categorie].forEach(article=>{
+
+            if(
+                String(article.code)
+                ===
+                String(code)
+            ){
+
+                resultat = article;
+
+            }
+
+        });
+
+    });
+
+    return resultat;
+
+}
