@@ -51,14 +51,15 @@ async function chargerStockCentral(){
 
     try{
 
-       const response = await fetch(
-    "https://johanschrub-prog.github.io/stock-central/stock.json"
-);
+        const response = await fetch(
+            "https://johanschrub-prog.github.io/stock-central/stock.json?t=" +
+            Date.now()
+        );
 
         stockCentral = await response.json();
 
         console.log(
-            "Stock central chargé",
+            "✅ Stock central chargé",
             stockCentral
         );
 
@@ -67,14 +68,13 @@ async function chargerStockCentral(){
     }catch(err){
 
         console.error(
-            "Erreur chargement stock",
+            "❌ Erreur chargement stock",
             err
         );
 
     }
 
 }
-
 function sauvegarderJSON(){
 
     const wb = XLSX.utils.book_new();
