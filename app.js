@@ -845,7 +845,7 @@ redescente:false
     reader.readAsArrayBuffer(file);
 
 }
-render();
+chargerStockCentral();
 function validerRemontee(){
 
     const articles = [
